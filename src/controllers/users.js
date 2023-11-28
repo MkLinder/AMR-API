@@ -1,10 +1,10 @@
 const database = require('../connection');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const nameFormatter = require('../utils/nameFormatter');
 
 const registerUser = async (req, res) => {
-    let { nome } = req.body;
-    const { email, senha } = req.body;
+    const { nome, email, senha } = req.body;
 
     try {
         const user = await database('usuarios')
@@ -28,6 +28,38 @@ const registerUser = async (req, res) => {
         return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     }
 }
+
+const login = async (req, res) => {
+    const { email, senha } = req.body;
+
+    try {
+        const user = await database('usuarios').where({ email });
+
+        if (user.length === 0) {
+            return res.status(404).json('O usuario não foi encontrado');
+        }
+
+        const correctPassword = await bcrypt.compare(senha, user[0].senha);
+
+        if (!correctPassword) {
+            return res.status(400).json('Email e senha não confere');
+        }
+
+        const token = jwt.sign({ id: user[0].id }, process.env.HASH_PASS, {
+            expiresIn: '1d',
+        });
+
+        const { senha: _, ...loggedInUser } = user[0];
+
+        return res.status(201).json({
+            user: loggedInUser,
+            token,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor' });
+    }
+};
 
 
 const updateUserData = async (req, res) => {
@@ -71,12 +103,14 @@ const updateUserData = async (req, res) => {
             return res.status(500).json({ mensagem: 'Erro do servidor. Usuário não foi atualizado.' });
         }
 
-        return res.status(204);
+        return res.status(200).json({ mensagem: 'Usuário atualizado.' });
     } catch (error) {
         return res.status(500).json('Erro interno do servidor');
     }
 }
 
 module.exports = {
-    registerUser
-}
+    registerUser,
+    login,
+    updateUserData
+};
