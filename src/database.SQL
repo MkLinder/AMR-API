@@ -9,3 +9,15 @@ create table categorias (
     id serial primary key,
     descricao text
 );
+
+insert into categorias 
+(descricao)
+values
+('Informatica'),
+('Celulares'),
+('Beleza e Perfumaria'),
+('Mercado'),
+('Livros e Papelaria'),
+('Moda'),
+('Bebe'),
+('Games');
