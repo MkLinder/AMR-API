@@ -18,7 +18,7 @@ route.post('/login', validateBodyRequisition(loginSchema), login);
 route.use(userAuthentication);
 
 route.get('/usuario', getUserDetails);
-route.put('/usuario', updateUserData);
+route.put('/usuario', validateBodyRequisition(schemaUsers), updateUserData);
 route.get('/categoria', listCategories);
 
 module.exports = route;
