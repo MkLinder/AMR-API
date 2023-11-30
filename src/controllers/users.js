@@ -90,43 +90,20 @@ const updateUserData = async (req, res) => {
   const user = req.user;
 
   try {
-    if (!nome && !email && !senha) {
-      return res
-        .status(400)
-        .json({ mensagem: 'É obrigatório preencher ao menos um campo' });
+    const emailExists = await database('usuarios').where({ email }).first();
+
+    if (emailExists.email && emailExists.email !== user.email) {
+
+      return res.status(400).json({ mensagem: 'Email ou senha inválido.' });
     }
 
-    if (nome) {
-      await database('usuarios')
-        .where({ id: user.id })
-        .update({ nome: nameFormatter(nome) });
-    }
+    const cryptedPass = await bcrypt.hash(senha, 10);
 
-    if (email) {
-      const existingEmail = await database('usuarios').where({ email }).first();
+    await database('usuarios')
+      .where({ id: user.id })
+      .update({ nome: nameFormatter(nome), email, senha: cryptedPass });
 
-      if (existingEmail && existingEmail.id !== user.id) {
-        return res.status(400).json('Email inválido.');
-      }
-
-      await database('usuarios').where({ id: user.id }).update({ email });
-    }
-
-    if (senha) {
-      const cryptedPass = await bcrypt.hash(senha, 10);
-
-      await database('usuarios')
-        .where({ id: user.id })
-        .update({ senha: cryptedPass });
-    }
-
-    if (!nome && !email && !senha) {
-      return res
-        .status(500)
-        .json({ mensagem: 'Erro do servidor. Usuário não foi atualizado.' });
-    }
-
-    return res.status(200).json({ mensagem: 'Usuário atualizado.' });
+    return res.status(204).json();
   } catch (error) {
     return res.status(500).json('Erro interno do servidor');
   }
