@@ -4,7 +4,7 @@ const validateBodyRequisition = (schema) => async (req, res, next) => {
 
         next();
     } catch (error) {
-        return res.status(500).json({ mensagem: error.message });
+        return res.status(400).json({ mensagem: error.message });
     }
 }
 
