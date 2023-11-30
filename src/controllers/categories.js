@@ -2,7 +2,7 @@ const database = require('../connection');
 
 const listCategories = async (req, res) => {
   try {
-    const categories = await database('categorias').first();
+    const categories = await database('categorias');
 
     return res.status(200).json(categories);
   } catch (error) {
