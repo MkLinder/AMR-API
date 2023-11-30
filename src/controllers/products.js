@@ -20,6 +20,23 @@ const listProducts = async (req, res) => {
     }
 }
 
+const productInformation = async (req, res) => {
+    const {id} = req.params;
+
+    try {
+        const productExists = await database('produtos').where({id}).first();
+
+        if (!productExists){
+            return res.status(404).json({mensagem: 'Produto não encontrado.'});
+        }
+    
+        return res.status(200).json(productExists);
+    } catch (error) {
+        return res.status(500).json({mensagem: 'Erro interno do servidor.'});
+    }
+}
+
 module.exports = {
-    listProducts
+    listProducts,
+    productInformation
 }
