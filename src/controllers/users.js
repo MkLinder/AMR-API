@@ -92,7 +92,7 @@ const updateUserData = async (req, res) => {
   try {
     const emailExists = await database('usuarios').where({ email }).first();
 
-    if (emailExists.email && emailExists.email !== user.email) {
+    if (emailExists.email && emailExists.id !== user.id) {
 
       return res.status(400).json({ mensagem: 'Email ou senha inválido.' });
     }
