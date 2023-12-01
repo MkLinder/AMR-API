@@ -10,7 +10,13 @@ const {
 const loginSchema = require('./schemas/login');
 const userAuthentication = require('./middlewares/authentication');
 const listCategories = require('./controllers/categories');
-const {registerProduct, updateProductData, listProducts, productInformation } = require('./controllers/products');
+const {
+  registerProduct, 
+  updateProductData, 
+  listProducts, 
+  productInformation, 
+  deleteProduct 
+} = require('./controllers/products');
 
 const schemaProducts = require('./schemas/registerProducts');
 const route = Router();
@@ -36,5 +42,6 @@ route.put(
 );
 route.get('/produto', listProducts);
 route.get('/produto/:id', productInformation);
+route.delete('/produto/:id', deleteProduct);
 
 module.exports = route;
