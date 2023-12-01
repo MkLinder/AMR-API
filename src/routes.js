@@ -10,7 +10,7 @@ const {
 const loginSchema = require('./schemas/login');
 const userAuthentication = require('./middlewares/authentication');
 const listCategories = require('./controllers/categories');
-const { registerProduct } = require('./controllers/products');
+const { registerProduct, deleteProduct } = require('./controllers/products');
 const schemaProducts = require('./schemas/registerProducts');
 const route = Router();
 
@@ -28,4 +28,7 @@ route.post(
   validateBodyRequisition(schemaProducts),
   registerProduct
 );
+
+route.delete('/produto/:id', deleteProduct);
+
 module.exports = route;
