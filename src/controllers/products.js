@@ -36,4 +36,31 @@ const registerProduct = async (req, res) => {
   }
 };
 
-module.exports = { registerProduct };
+const deleteProduct = async (req, res) => {
+  const { id: productId } = req.params;
+
+  try {
+    const product = await database('produtos').where({ id: productId }).debug();
+
+    if (product.length === 0) {
+      return res.status(404).json({ mensagem: 'Produto não encontrado.' });
+    }
+
+    const excludedProduct = await database('produtos')
+      .del()
+      .where({ id: productId });
+
+    if (excludedProduct === 0) {
+      return res.status(400).json({ mensagem: 'O produto não foi excluido' });
+    }
+
+    return res.status(204).json();
+  } catch (error) {
+    return res.status(500).json({ mensagem: 'Erro interno do servidor' });
+  }
+};
+
+module.exports = {
+  registerProduct,
+  deleteProduct,
+};
