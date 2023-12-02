@@ -1,8 +1,9 @@
+const formatCep = require('../utils/cepFormatter');
 const formatCpf = require('../utils/cpfFormatter');
 
 const validateBodyRequisition = (schema) => async (req, res, next) => {
-  const { cpf } = req.body;
-  let body = req.body;
+  const { cpf, cep } = req.body;
+  let body = {}; 
 
   if (cpf) {
     if (cpf.length !== 11 && cpf.length !== 14) {
@@ -11,11 +12,22 @@ const validateBodyRequisition = (schema) => async (req, res, next) => {
         .json({ mensagem: 'O cpf informado precisa ter onze números.' });
     }
 
-    body.cpf = formatCpf(cpf);
+    req.body.cpf = formatCpf(cpf);
+  }
+
+  if (cep) {
+    const { nome, email, cpf, cep } = req.body;
+    
+    body.nome = nome,
+    body.email = email,
+    body.cpf = formatCpf(cpf),
+    body.cep = formatCep(cep);
   }
 
   try {
-    await schema.validateAsync(body);
+    const information = JSON.stringify(body) === '{}' ? req.body : body;
+
+    await schema.validateAsync(information);
 
     next();
   } catch (error) {

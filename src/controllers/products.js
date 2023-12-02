@@ -31,7 +31,6 @@ const registerProduct = async (req, res) => {
         .status(201)
         .json({ mensagem: 'Produto cadastrado com sucesso.' });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     }
 };
@@ -53,7 +52,6 @@ const updateProductData = async (req, res) => {
   
       return res.status(204).json();
     } catch (error) {
-      console.log(error.message);
       return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     }
   };
