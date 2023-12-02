@@ -21,6 +21,13 @@ const schemaCustomers = joiValidations.object({
       'string.empty': 'O campo CPF é obrigatório.',
       'string.pattern.base': 'O CPF deve ser um número válido.',
     }),
+
+  cep: joiValidations
+    .string()
+    .regex(/^\d{5}-\d{3}$/)
+    .messages({
+      'string.pattern.base': 'O CEP deve ter um formato válido (XXXXX-XXX).',
+    }),
 });
 
 module.exports = schemaCustomers;
