@@ -1,7 +1,7 @@
 const database = require("../connection");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const nameFormatter = require("../utils/nameFormatter");
+const { nameFormatter } = require("../utils/dataFormatter");
 
 const registerUser = async (req, res) => {
   const { nome, email, senha } = req.body;
@@ -62,7 +62,6 @@ const login = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log(error.message);
     return res.status(500).json({ mensagem: "Erro interno do servidor" });
   }
 };
