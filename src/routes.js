@@ -20,7 +20,7 @@ const {
 
 const schemaProducts = require('./schemas/registerProducts');
 const schemaCustomers = require('./schemas/registerCustomer');
-const { registerCustomer } = require('./controllers/customers');
+const { registerCustomer, editCustomerData } = require('./controllers/customers');
 const route = Router();
 
 route.get('/categoria', listCategories);
@@ -45,6 +45,8 @@ route.put(
 route.get('/produto', listProducts);
 route.get('/produto/:id', productInformation);
 route.delete('/produto/:id', deleteProduct);
-route.post('/cliente', validateBodyRequisition(schemaCustomers), registerCustomer)
+
+route.post('/cliente', validateBodyRequisition(schemaCustomers), registerCustomer);
+route.put('/cliente/:id', validateBodyRequisition(schemaCustomers), editCustomerData);
 
 module.exports = route;
