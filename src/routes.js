@@ -1,13 +1,6 @@
 const { Router } = require('express');
+const route = Router();
 const validateBodyRequisition = require('./middlewares/validateBodyRequisition');
-const schemaUsers = require('./schemas/registerUsers');
-const {
-  registerUser,
-  login,
-  updateUserData,
-  getUserDetails,
-} = require('./controllers/users');
-const loginSchema = require('./schemas/login');
 const userAuthentication = require('./middlewares/authentication');
 const listCategories = require('./controllers/categories');
 const {
@@ -17,16 +10,22 @@ const {
   productInformation,
   deleteProduct,
 } = require('./controllers/products');
-
-const schemaProducts = require('./schemas/registerProducts');
-const schemaCustomers = require('./schemas/registerCustomer');
 const {
   registerCustomer,
   editCustomerData,
   listCustomers,
   getCustomerDetails,
 } = require('./controllers/customers');
-const route = Router();
+const schemaUsers = require('./schemas/registerUsers');
+const {
+  registerUser,
+  login,
+  updateUserData,
+  getUserDetails,
+} = require('./controllers/users');
+const loginSchema = require('./schemas/login');
+const schemaProducts = require('./schemas/registerProducts');
+const schemaCustomers = require('./schemas/registerCustomer');
 
 route.get('/categoria', listCategories);
 route.post('/usuario', validateBodyRequisition(schemaUsers), registerUser);
