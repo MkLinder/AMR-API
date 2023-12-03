@@ -91,7 +91,34 @@ const editCustomerData = async (req, res) => {
   }
 };
 
+const listCustomers = async (req, res) => {
+  try {
+    const customers = await database('clientes');
+
+    return res.status(200).json(customers);
+  } catch (error) {
+    return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
+  }
+};
+
+const getCustomerDetails = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const existingCustomer = await database('clientes').where({ id }).first();
+
+    if (!existingCustomer) {
+      return res.status(404).json({ mensagem: 'Cliente não encontrado.' });
+    }
+
+    return res.status(200).json(existingCustomer);
+  } catch (error) {
+    return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
+  }
+};
 module.exports = {
   registerCustomer,
   editCustomerData,
+  listCustomers,
+  getCustomerDetails,
 };

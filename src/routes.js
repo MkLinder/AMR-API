@@ -11,16 +11,21 @@ const loginSchema = require('./schemas/login');
 const userAuthentication = require('./middlewares/authentication');
 const listCategories = require('./controllers/categories');
 const {
-  registerProduct, 
-  updateProductData, 
-  listProducts, 
-  productInformation, 
-  deleteProduct 
+  registerProduct,
+  updateProductData,
+  listProducts,
+  productInformation,
+  deleteProduct,
 } = require('./controllers/products');
 
 const schemaProducts = require('./schemas/registerProducts');
 const schemaCustomers = require('./schemas/registerCustomer');
-const { registerCustomer, editCustomerData } = require('./controllers/customers');
+const {
+  registerCustomer,
+  editCustomerData,
+  listCustomers,
+  getCustomerDetails,
+} = require('./controllers/customers');
 const route = Router();
 
 route.get('/categoria', listCategories);
@@ -46,7 +51,17 @@ route.get('/produto', listProducts);
 route.get('/produto/:id', productInformation);
 route.delete('/produto/:id', deleteProduct);
 
-route.post('/cliente', validateBodyRequisition(schemaCustomers), registerCustomer);
-route.put('/cliente/:id', validateBodyRequisition(schemaCustomers), editCustomerData);
+route.post(
+  '/cliente',
+  validateBodyRequisition(schemaCustomers),
+  registerCustomer
+);
+route.put(
+  '/cliente/:id',
+  validateBodyRequisition(schemaCustomers),
+  editCustomerData
+);
+route.get('/cliente', listCustomers);
+route.get('/cliente/:id', getCustomerDetails);
 
 module.exports = route;
