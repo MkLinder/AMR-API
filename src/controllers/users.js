@@ -50,12 +50,10 @@ const login = async (req, res) => {
     const correctPassword = await bcrypt.compare(senha, user[0].senha);
 
     if (!correctPassword) {
-      return res
-        .status(400)
-        .json({
-          mensagem:
-            'Senha inválida. Verifique se a senha está correta e tente mais uma vez.',
-        });
+      return res.status(400).json({
+        mensagem:
+          'Senha inválida. Verifique se a senha está correta e tente mais uma vez.',
+      });
     }
 
     const token = jwt.sign({ id: user[0].id }, process.env.HASH_PASS, {
@@ -96,12 +94,10 @@ const updateUserData = async (req, res) => {
   const user = req.user;
 
   try {
-    const userFoundByEmail = await database("usuarios")
-    .where({ email })
-      .first();
+    const userFoundByEmail = await database('usuarios').where({ email });
 
-    if (userFoundByEmail.email && userFoundByEmail.id !== user.id) {
-      return res.status(400).json({ mensagem: "Email ou senha inválido." });
+    if (userFoundByEmail.length > 0 && userFoundByEmail[0].id !== user.id) {
+      return res.status(400).json({ mensagem: 'Email ou senha inválido.' });
     }
 
     const cryptedPass = await bcrypt.hash(senha, 10);
