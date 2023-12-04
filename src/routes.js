@@ -3,64 +3,56 @@ const route = Router();
 const validateBodyRequisition = require('./middlewares/validateBodyRequisition');
 const userAuthentication = require('./middlewares/authentication');
 const listCategories = require('./controllers/categories');
-const {
-  registerProduct,
-  updateProductData,
-  listProducts,
-  productInformation,
-  deleteProduct,
-} = require('./controllers/products');
-const {
-  registerCustomer,
-  editCustomerData,
-  listCustomers,
-  getCustomerDetails,
-} = require('./controllers/customers');
+const products = require('./controllers/products');
+const customers = require('./controllers/customers');
+const users = require('./controllers/users');
 const schemaUsers = require('./schemas/registerUsers');
-const {
-  registerUser,
-  login,
-  updateUserData,
-  getUserDetails,
-} = require('./controllers/users');
 const loginSchema = require('./schemas/login');
 const schemaProducts = require('./schemas/registerProducts');
 const schemaCustomers = require('./schemas/registerCustomer');
 
 route.get('/categoria', listCategories);
-route.post('/usuario', validateBodyRequisition(schemaUsers), registerUser);
-route.post('/login', validateBodyRequisition(loginSchema), login);
+route.post(
+  '/usuario',
+  validateBodyRequisition(schemaUsers),
+  users.registerUser
+);
+route.post('/login', validateBodyRequisition(loginSchema), users.login);
 
 route.use(userAuthentication);
 
-route.get('/usuario', getUserDetails);
-route.put('/usuario', validateBodyRequisition(schemaUsers), updateUserData);
+route.get('/usuario', users.getUserDetails);
+route.put(
+  '/usuario',
+  validateBodyRequisition(schemaUsers),
+  users.updateUserData
+);
 
 route.post(
   '/produto',
   validateBodyRequisition(schemaProducts),
-  registerProduct
+  products.registerProduct
 );
 route.put(
   '/produto/:id',
   validateBodyRequisition(schemaProducts),
-  updateProductData
+  products.updateProductData
 );
-route.get('/produto', listProducts);
-route.get('/produto/:id', productInformation);
-route.delete('/produto/:id', deleteProduct);
+route.get('/produto', products.listProducts);
+route.get('/produto/:id', products.productInformation);
+route.delete('/produto/:id', products.deleteProduct);
 
 route.post(
   '/cliente',
   validateBodyRequisition(schemaCustomers),
-  registerCustomer
+  customers.registerCustomer
 );
 route.put(
   '/cliente/:id',
   validateBodyRequisition(schemaCustomers),
-  editCustomerData
+  customers.editCustomerData
 );
-route.get('/cliente', listCustomers);
-route.get('/cliente/:id', getCustomerDetails);
+route.get('/cliente', customers.listCustomers);
+route.get('/cliente/:id', customers.getCustomerDetails);
 
 module.exports = route;

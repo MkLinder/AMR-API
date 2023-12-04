@@ -1,21 +1,21 @@
-const database = require("../connection");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const { nameFormatter } = require("../utils/dataFormatter");
+const database = require('../connection');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const { nameFormatter } = require('../utils/dataFormatter');
 
 const registerUser = async (req, res) => {
   const { nome, email, senha } = req.body;
 
   try {
-    const user = await database("usuarios").where({ email }).first();
+    const user = await database('usuarios').where({ email }).first();
 
     if (user) {
-      return res.status(400).json({ mensagem: "Email ou senha inválido." });
+      return res.status(400).json({ mensagem: 'Email ou senha inválido.' });
     }
 
     const cryptedPass = await bcrypt.hash(senha, 10);
 
-    const { rowCount } = await database("usuarios").insert({
+    const { rowCount } = await database('usuarios').insert({
       nome: nameFormatter(nome),
       email,
       senha: cryptedPass,
@@ -24,14 +24,14 @@ const registerUser = async (req, res) => {
     if (rowCount === 0) {
       return res
         .status(500)
-        .json({ mensagem: "Erro do servidor. Usuário não foi cadastrado." });
+        .json({ mensagem: 'Erro do servidor. Usuário não foi cadastrado.' });
     }
 
     return res
       .status(201)
-      .json({ mensagem: "Usuário cadastrado com sucesso." });
+      .json({ mensagem: 'Usuário cadastrado com sucesso.' });
   } catch (error) {
-    return res.status(500).json({ mensagem: "Erro interno do servidor." });
+    return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
 };
 
@@ -39,20 +39,20 @@ const login = async (req, res) => {
   const { email, senha } = req.body;
 
   try {
-    const user = await database("usuarios").where({ email });
+    const user = await database('usuarios').where({ email });
 
     if (user.length === 0) {
-      return res.status(404).json("O usuario não foi encontrado");
+      return res.status(404).json('O usuario não foi encontrado');
     }
 
     const correctPassword = await bcrypt.compare(senha, user[0].senha);
 
     if (!correctPassword) {
-      return res.status(400).json("Email e senha não confere");
+      return res.status(400).json('Email e senha não confere');
     }
 
     const token = jwt.sign({ id: user[0].id }, process.env.HASH_PASS, {
-      expiresIn: "1d",
+      expiresIn: '1d',
     });
 
     const { senha: _, ...loggedInUser } = user[0];
@@ -62,7 +62,7 @@ const login = async (req, res) => {
       token,
     });
   } catch (error) {
-    return res.status(500).json({ mensagem: "Erro interno do servidor" });
+    return res.status(500).json({ mensagem: 'Erro interno do servidor' });
   }
 };
 
@@ -70,17 +70,17 @@ const getUserDetails = async (req, res) => {
   const { id } = req.user;
 
   try {
-    const user = await database("usuarios").where({ id }).first();
+    const user = await database('usuarios').where({ id }).first();
 
     if (!user) {
-      return res.status(404).json({ mensagem: "Usuário não encontrado." });
+      return res.status(404).json({ mensagem: 'Usuário não encontrado.' });
     }
 
     const { senha: _, ...userLoggedIn } = user;
 
     return res.status(200).json(userLoggedIn);
   } catch (error) {
-    return res.status(500).json({ mensagem: "Erro interno do servidor." });
+    return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
 };
 
@@ -89,23 +89,23 @@ const updateUserData = async (req, res) => {
   const user = req.user;
 
   try {
-    const userFoundByEmail = await database("usuarios")
+    const userFoundByEmail = await database('usuarios')
       .where({ email })
       .first();
 
     if (userFoundByEmail.email && userFoundByEmail.id !== user.id) {
-      return res.status(400).json({ mensagem: "Email ou senha inválido." });
+      return res.status(400).json({ mensagem: 'Email ou senha inválido.' });
     }
 
     const cryptedPass = await bcrypt.hash(senha, 10);
 
-    await database("usuarios")
+    await database('usuarios')
       .where({ id: user.id })
       .update({ nome: nameFormatter(nome), email, senha: cryptedPass });
 
     return res.status(204).json();
   } catch (error) {
-    return res.status(500).json("Erro interno do servidor");
+    return res.status(500).json('Erro interno do servidor');
   }
 };
 
