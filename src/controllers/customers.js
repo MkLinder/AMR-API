@@ -61,8 +61,6 @@ const editCustomerData = async (req, res) => {
 
     if (EmailCpfExists.length > 0) {
       for (const item of EmailCpfExists) {
-        console.log(item.id);
-        console.log(customerExists.id);
         if (item.id !== customerExists.id) {
           return res.status(400).json({ mensagem: 'Email ou cpf inválido.' });
         }
@@ -89,7 +87,6 @@ const editCustomerData = async (req, res) => {
 
     return res.status(200).json('Cadastro atualizado.');
   } catch (error) {
-    console.log(error.message);
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
 };

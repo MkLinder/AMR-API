@@ -44,31 +44,39 @@ As rotas para fazer as requisições são:
 
 ### post https://better-fish-coat.cyclic.app/usuario<br>
 
-- Cadastrar usuário.
+- Cadastrar usuário
 
 ![1111](https://github.com/MkLinder/API_E-commerce/assets/94409465/be08c245-7750-48eb-9d88-60513d89beef)
 
 ### post https://better-fish-coat.cyclic.app/login<br>
 
-- Login do usuário.
+- Login do usuário
 
 ![2222](https://github.com/MkLinder/API_E-commerce/assets/94409465/4cd68a52-c449-443c-a406-a95c3829af97)
 
 ### get https://better-fish-coat.cyclic.app/usuario<br>
 
-- Mostra informações do usuário logado.
+- Mostra informações do usuário logado
 
 ![3333](https://github.com/MkLinder/API_E-commerce/assets/94409465/59561606-d143-40b2-89f4-63f10c329434)
 
 ### put https://better-fish-coat.cyclic.app/usuario<br>
 
-- Atualizar dados do usuário logado.
+- Atualizar dados do usuário logado
 
 ![4444](https://github.com/MkLinder/API_E-commerce/assets/94409465/c483fae6-a613-40e9-b505-0c7209477719)
 
+#
+
+### post https://better-fish-coat.cyclic.app/cliente
+
+- Cadastrar cliente
+
+#
+
 ### get https://better-fish-coat.cyclic.app/categorias<br>
 
-- Listar categorias.
+- Listar categorias
 
 ![5555](https://github.com/MkLinder/API_E-commerce/assets/94409465/42af6cf8-754b-4b15-b49e-bfde66884780)
 
