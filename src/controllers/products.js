@@ -1,5 +1,6 @@
 const database = require('../connection');
 const { nameFormatter } = require('../utils/dataFormatter');
+const paramIdValidator = require('../utils/paramIdValidator');
 
 const registerProduct = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
@@ -49,6 +50,15 @@ const updateProductData = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
 
   try {
+    const idIsNotNumber = isNaN(Number(id));
+
+    if (idIsNotNumber) {
+      return paramIdValidator(
+        res,
+        'O identificador do produto deve ser um número.'
+      );
+    }
+
     const existingProduct = await database('produtos').where({ id }).first();
 
     if (!existingProduct) {
@@ -67,7 +77,7 @@ const updateProductData = async (req, res) => {
       .where({ id })
       .update({ descricao, quantidade_estoque, valor, categoria_id });
 
-    return res.status(204).json();
+    return res.status(200).json({ mensagem: 'Dados atualizados.' });
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
@@ -101,6 +111,15 @@ const productInformation = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const idIsNotNumber = isNaN(Number(id));
+
+    if (idIsNotNumber) {
+      return paramIdValidator(
+        res,
+        'O identificador do produto deve ser um número.'
+      );
+    }
+
     const productExists = await database('produtos').where({ id }).first();
 
     if (!productExists) {
@@ -117,6 +136,15 @@ const deleteProduct = async (req, res) => {
   const { id: productId } = req.params;
 
   try {
+    const idIsNotNumber = isNaN(Number(productId));
+
+    if (idIsNotNumber) {
+      return paramIdValidator(
+        res,
+        'O identificador do produto deve ser um número'
+      );
+    }
+
     const product = await database('produtos').where({ id: productId });
 
     if (product.length === 0) {
@@ -128,10 +156,10 @@ const deleteProduct = async (req, res) => {
       .where({ id: productId });
 
     if (excludedProduct === 0) {
-      return res.status(400).json({ mensagem: 'O produto não foi excluido.' });
+      return res.status(400).json({ mensagem: 'O produto não foi deletado.' });
     }
 
-    return res.status(204).json();
+    return res.status(200).json({ mensagem: 'Produto deletado com sucesso.' });
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
