@@ -28,7 +28,8 @@ const registerProduct = async (req, res) => {
         quantidade_estoque,
         valor,
         categoria_id,
-      });
+      })
+      .returning('*');
 
     if (!productRegistration) {
       return res
@@ -36,9 +37,7 @@ const registerProduct = async (req, res) => {
         .json({ mensagem: 'Erro do servidor. Produto não foi cadastrado.' });
     }
 
-    return res
-      .status(201)
-      .json({ mensagem: 'Produto cadastrado com sucesso.' });
+    return res.status(201).json(productRegistration[0]);
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
