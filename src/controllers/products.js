@@ -156,10 +156,10 @@ const deleteProduct = async (req, res) => {
       .where({ id: productId });
 
     if (excludedProduct === 0) {
-      return res.status(400).json({ mensagem: 'O produto não foi excluido.' });
+      return res.status(400).json({ mensagem: 'O produto não foi deletado.' });
     }
 
-    return res.status(204).json();
+    return res.status(200).json({ mensagem: 'Produto deletado com sucesso.' });
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
