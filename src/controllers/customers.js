@@ -1,6 +1,7 @@
 const database = require('../connection');
 const formatCep = require('../utils/cepFormatter');
 const { propertiesFormatter } = require('../utils/dataFormatter');
+const paramIdValidator = require('../utils/paramIdValidator');
 
 const registerCustomer = async (req, res) => {
   const { email, cpf, cep } = req.body;
@@ -29,10 +30,14 @@ const registerCustomer = async (req, res) => {
     const newCustomer = await database('clientes').insert(propertiesFormatted);
 
     if (newCustomer.rowCount === 0) {
-      return res.status(400).json({ mensagem: 'O cliente não foi cadastrado.' });
+      return res
+        .status(400)
+        .json({ mensagem: 'O cliente não foi cadastrado.' });
     }
 
-    return res.status(200).json({ mensagem: 'Cliente cadastrado com sucesso.' });
+    return res
+      .status(200)
+      .json({ mensagem: 'Cliente cadastrado com sucesso.' });
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
@@ -49,6 +54,15 @@ const editCustomerData = async (req, res) => {
   }
 
   try {
+    const idIsNotNumber = isNaN(Number(id));
+
+    if (idIsNotNumber) {
+      return paramIdValidator(
+        res,
+        'O identificador do cliente deve ser um número.'
+      );
+    }
+
     const customerExists = await database('clientes').where({ id }).first();
 
     if (!customerExists) {
@@ -82,7 +96,9 @@ const editCustomerData = async (req, res) => {
       .update(propertiesFormatted);
 
     if (newCustomer.rowCount === 0) {
-      return res.status(400).json({ mensagem: 'O cliente não foi cadastrado.' });
+      return res
+        .status(400)
+        .json({ mensagem: 'O cliente não foi cadastrado.' });
     }
 
     return res.status(200).json({ mensagem: 'Cadastro atualizado.' });
@@ -105,6 +121,15 @@ const getCustomerDetails = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const idIsNotNumber = isNaN(Number(id));
+
+    if (idIsNotNumber) {
+      return paramIdValidator(
+        res,
+        'O identificador do cliente deve ser um número.'
+      );
+    }
+
     const existingCustomer = await database('clientes').where({ id }).first();
 
     if (!existingCustomer) {
