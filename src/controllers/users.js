@@ -1,7 +1,7 @@
 const database = require('../connection');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const nameFormatter = require('../utils/nameFormatter');
+const { nameFormatter } = require('../utils/dataFormatter');
 
 const registerUser = async (req, res) => {
   const { nome, email, senha } = req.body;
@@ -42,13 +42,18 @@ const login = async (req, res) => {
     const user = await database('usuarios').where({ email });
 
     if (user.length === 0) {
-      return res.status(404).json('O usuario não foi encontrado');
+      return res
+        .status(404)
+        .json({ mensagem: 'O usuario não foi encontrado.' });
     }
 
     const correctPassword = await bcrypt.compare(senha, user[0].senha);
 
     if (!correctPassword) {
-      return res.status(400).json('Email e senha não confere');
+      return res.status(400).json({
+        mensagem:
+          'Senha inválida. Verifique se a senha está correta e tente mais uma vez.',
+      });
     }
 
     const token = jwt.sign({ id: user[0].id }, process.env.HASH_PASS, {
@@ -62,7 +67,6 @@ const login = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log(error.message);
     return res.status(500).json({ mensagem: 'Erro interno do servidor' });
   }
 };
@@ -90,10 +94,9 @@ const updateUserData = async (req, res) => {
   const user = req.user;
 
   try {
-    const userFoundByEmail = await database('usuarios').where({ email }).first();
+    const userFoundByEmail = await database('usuarios').where({ email });
 
-    if (userFoundByEmail.email && userFoundByEmail.id !== user.id) {
-
+    if (userFoundByEmail.length > 0 && userFoundByEmail[0].id !== user.id) {
       return res.status(400).json({ mensagem: 'Email ou senha inválido.' });
     }
 
@@ -103,9 +106,12 @@ const updateUserData = async (req, res) => {
       .where({ id: user.id })
       .update({ nome: nameFormatter(nome), email, senha: cryptedPass });
 
-    return res.status(204).json();
+    return res
+      .status(200)
+      .json({ mensagem: 'Usuario atualizado com sucesso.' });
   } catch (error) {
-    return res.status(500).json('Erro interno do servidor');
+    console.log(error.message);
+    return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
 };
 

@@ -17,14 +17,14 @@ const userAuthentication = async (req, res, next) => {
             .first();
 
         if (!user) {
-            return res.status(401).json('Não autorizado');
+            return res.status(401).json({ mensagem: 'Não autorizado' });
         }
 
         req.user = user;
 
         next();
     } catch (error) {
-        return res.status(500).json('Não autorizado');
+        return res.status(500).json({ mensagem: 'Não autorizado' });
     }
 };
 
