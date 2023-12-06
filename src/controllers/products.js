@@ -1,6 +1,5 @@
 const database = require('../connection');
 const { nameFormatter } = require('../utils/dataFormatter');
-const paramIdValidator = require('../utils/paramIdValidator');
 
 const registerProduct = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
@@ -49,15 +48,6 @@ const updateProductData = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
 
   try {
-    const idIsNotNumber = isNaN(Number(id));
-
-    if (idIsNotNumber) {
-      return paramIdValidator(
-        res,
-        'O identificador do produto deve ser um número.'
-      );
-    }
-
     const existingProduct = await database('produtos').where({ id }).first();
 
     if (!existingProduct) {
@@ -99,7 +89,6 @@ const listProducts = async (req, res) => {
   const { categoria_id } = req.query;
 
   try {
-    // Criar 'if' para validar se chega somente número
     if (categoria_id) {
       const categoryExists = await database('categorias')
         .where({ id: categoria_id })
@@ -124,15 +113,6 @@ const productInformation = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const idIsNotNumber = isNaN(Number(id));
-
-    if (idIsNotNumber) {
-      return paramIdValidator(
-        res,
-        'O identificador do produto deve ser um número.'
-      );
-    }
-
     const productExists = await database('produtos').where({ id }).first();
 
     if (!productExists) {
@@ -149,15 +129,6 @@ const deleteProduct = async (req, res) => {
   const { id: productId } = req.params;
 
   try {
-    const idIsNotNumber = isNaN(Number(productId));
-
-    if (idIsNotNumber) {
-      return paramIdValidator(
-        res,
-        'O identificador do produto deve ser um número'
-      );
-    }
-
     const product = await database('produtos').where({ id: productId });
 
     if (product.length === 0) {
