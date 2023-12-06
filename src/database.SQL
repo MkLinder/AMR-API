@@ -18,6 +18,7 @@ values
 ('Beleza e Perfumaria'),
 ('Mercado'),
 ('Livros e Papelaria'),
+('Brinquedo'),
 ('Moda'),
 ('Bebe'),
 ('Games');
