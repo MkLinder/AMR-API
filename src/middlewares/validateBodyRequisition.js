@@ -18,10 +18,14 @@ const validateBodyRequisition = (schema) => async (req, res, next) => {
   if (cep) {
     const { nome, email, cpf, cep } = req.body;
 
-    (body.nome = nome),
-      (body.email = email),
-      (body.cpf = formatCpf(cpf)),
-      (body.cep = formatCep(cep));
+    body.nome = nome;
+    body.email = email;
+
+    if (cpf) {
+      body.cpf = formatCpf(cpf);
+    }
+
+    body.cep = formatCep(cep);
   }
 
   try {
