@@ -27,7 +27,9 @@ const registerCustomer = async (req, res) => {
 
     propertiesFormatted.email = email;
 
-    const newCustomer = await database('clientes').insert(propertiesFormatted);
+    const newCustomer = await database('clientes')
+      .insert(propertiesFormatted)
+      .returning('*');
 
     if (newCustomer.rowCount === 0) {
       return res
@@ -35,9 +37,7 @@ const registerCustomer = async (req, res) => {
         .json({ mensagem: 'O cliente não foi cadastrado.' });
     }
 
-    return res
-      .status(200)
-      .json({ mensagem: 'Cliente cadastrado com sucesso.' });
+    return res.status(201).json(newCustomer[0]);
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
