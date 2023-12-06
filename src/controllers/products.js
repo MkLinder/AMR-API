@@ -54,6 +54,14 @@ const updateProductData = async (req, res) => {
       return res.status(404).json({ mensagem: 'Produto não encontrado.' });
     }
 
+    const existingCategory = await database('categorias')
+      .where({ id: categoria_id })
+      .first();
+
+    if (!existingCategory) {
+      return res.status(404).json({ mensagem: 'Categoria não encontrada.' });
+    }
+
     const existingNameProduct = await database('produtos')
       .where({ descricao: nameFormatter(descricao) })
       .first();
@@ -64,7 +72,12 @@ const updateProductData = async (req, res) => {
 
     await database('produtos')
       .where({ id })
-      .update({ descricao, quantidade_estoque, valor, categoria_id });
+      .update({
+        descricao: nameFormatter(descricao),
+        quantidade_estoque,
+        valor,
+        categoria_id,
+      });
 
     return res.status(204).json();
   } catch (error) {
@@ -76,6 +89,7 @@ const listProducts = async (req, res) => {
   const { categoria_id } = req.query;
 
   try {
+    // Criar 'if' para validar se chega somente número
     if (categoria_id) {
       const categoryExists = await database('categorias')
         .where({ id: categoria_id })
