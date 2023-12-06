@@ -1,6 +1,5 @@
 const database = require('../connection');
 const { nameFormatter } = require('../utils/dataFormatter');
-const paramIdValidator = require('../utils/paramIdValidator');
 
 const registerProduct = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
@@ -29,7 +28,8 @@ const registerProduct = async (req, res) => {
         quantidade_estoque,
         valor,
         categoria_id,
-      });
+      })
+      .returning('*');
 
     if (!productRegistration) {
       return res
@@ -37,9 +37,7 @@ const registerProduct = async (req, res) => {
         .json({ mensagem: 'Erro do servidor. Produto não foi cadastrado.' });
     }
 
-    return res
-      .status(201)
-      .json({ mensagem: 'Produto cadastrado com sucesso.' });
+    return res.status(201).json(productRegistration[0]);
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
@@ -50,19 +48,18 @@ const updateProductData = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
 
   try {
-    const idIsNotNumber = isNaN(Number(id));
-
-    if (idIsNotNumber) {
-      return paramIdValidator(
-        res,
-        'O identificador do produto deve ser um número.'
-      );
-    }
-
     const existingProduct = await database('produtos').where({ id }).first();
 
     if (!existingProduct) {
       return res.status(404).json({ mensagem: 'Produto não encontrado.' });
+    }
+
+    const existingCategory = await database('categorias')
+      .where({ id: categoria_id })
+      .first();
+
+    if (!existingCategory) {
+      return res.status(404).json({ mensagem: 'Categoria não encontrada.' });
     }
 
     const existingNameProduct = await database('produtos')
@@ -75,9 +72,14 @@ const updateProductData = async (req, res) => {
 
     await database('produtos')
       .where({ id })
-      .update({ descricao, quantidade_estoque, valor, categoria_id });
+      .update({
+        descricao: nameFormatter(descricao),
+        quantidade_estoque,
+        valor,
+        categoria_id,
+      });
 
-    return res.status(200).json({ mensagem: 'Dados atualizados.' });
+    return res.status(204).json();
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
@@ -111,15 +113,6 @@ const productInformation = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const idIsNotNumber = isNaN(Number(id));
-
-    if (idIsNotNumber) {
-      return paramIdValidator(
-        res,
-        'O identificador do produto deve ser um número.'
-      );
-    }
-
     const productExists = await database('produtos').where({ id }).first();
 
     if (!productExists) {
@@ -136,15 +129,6 @@ const deleteProduct = async (req, res) => {
   const { id: productId } = req.params;
 
   try {
-    const idIsNotNumber = isNaN(Number(productId));
-
-    if (idIsNotNumber) {
-      return paramIdValidator(
-        res,
-        'O identificador do produto deve ser um número'
-      );
-    }
-
     const product = await database('produtos').where({ id: productId });
 
     if (product.length === 0) {

@@ -106,11 +106,8 @@ const updateUserData = async (req, res) => {
       .where({ id: user.id })
       .update({ nome: nameFormatter(nome), email, senha: cryptedPass });
 
-    return res
-      .status(200)
-      .json({ mensagem: 'Usuario atualizado com sucesso.' });
+    return res.status(204).json();
   } catch (error) {
-    console.log(error.message);
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
 };
