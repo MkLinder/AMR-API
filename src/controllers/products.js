@@ -89,7 +89,6 @@ const listProducts = async (req, res) => {
   const { categoria_id } = req.query;
 
   try {
-    // Criar 'if' para validar se chega somente número
     if (categoria_id) {
       const categoryExists = await database('categorias')
         .where({ id: categoria_id })

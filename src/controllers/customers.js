@@ -91,7 +91,7 @@ const editCustomerData = async (req, res) => {
         .json({ mensagem: 'O cliente não foi cadastrado.' });
     }
 
-    return res.status(200).json({ mensagem: 'Cadastro atualizado.' });
+    return res.status(204).json();
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
