@@ -10,6 +10,8 @@ const schemaUsers = require('./schemas/registerUsers');
 const loginSchema = require('./schemas/login');
 const schemaProducts = require('./schemas/registerProducts');
 const schemaCustomers = require('./schemas/registerCustomer');
+const orders = require('./controllers/orders');
+const schemaOrders = require('./schemas/registerOrders');
 
 route.get('/categoria', listCategories);
 route.post(
@@ -54,5 +56,12 @@ route.put(
 );
 route.get('/cliente', customers.listCustomers);
 route.get('/cliente/:id', customers.getCustomerDetails);
+
+route.post(
+  '/pedido',
+  validateBodyRequisition(schemaOrders),
+  orders.registerOrder
+);
+route.get('/pedido', orders.listOrders);
 
 module.exports = route;
