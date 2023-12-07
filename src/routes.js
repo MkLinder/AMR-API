@@ -56,6 +56,12 @@ route.put(
 );
 route.get('/cliente', customers.listCustomers);
 route.get('/cliente/:id', customers.getCustomerDetails);
-route.post('/pedido', validateBodyRequisition(schemaOrders), orders.registerOrder)
+
+route.post(
+  '/pedido',
+  validateBodyRequisition(schemaOrders),
+  orders.registerOrder
+);
+route.get('/pedido', orders.listOrders);
 
 module.exports = route;
