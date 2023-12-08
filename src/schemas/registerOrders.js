@@ -2,13 +2,21 @@ const joiValidations = require('joi');
 
 const productSchema = joiValidations
   .object({
-    produto_id: joiValidations.number().required().messages({
+    produto_id: joiValidations.number().required().integer().positive().messages({
       'any.required': 'O campo produto_id é obrigatório.',
       'number.base': 'O campo produto_id precisa ser um número.',
+      'number.integer':
+        'O campo produto_id precisa ser um número inteiro.',
+      'number.positive':
+        'O campo produto_id precisa ser um número positivo.',
     }),
-    quantidade_produto: joiValidations.number().required().messages({
+    quantidade_produto: joiValidations.number().required().integer().positive().messages({
       'any.required': 'O campo quantidade_produto é obrigatório.',
       'number.base': 'O campo quantidade_produto precisa ser um número.',
+      'number.integer':
+        'O campo quantidade_produto precisa ser um número inteiro.',
+      'number.positive':
+        'O campo quantidade_produto precisa ser um número positivo.',
     }),
   })
   .min(1);
@@ -18,6 +26,7 @@ const schemaOrders = joiValidations
     cliente_id: joiValidations.number().required().messages({
       'any.required': 'O campo client_id é obrigatório.',
       'string.empty': 'O campo cliente_id é obrigatório.',
+      'number.base': 'O campo cliente_id precisa ser um número.',
     }),
 
     pedido_produtos: joiValidations
