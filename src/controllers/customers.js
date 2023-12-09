@@ -1,4 +1,4 @@
-const database = require('../connection');
+const database = require('../services/connection');
 const formatCep = require('../utils/cepFormatter');
 const { propertiesFormatter } = require('../utils/dataFormatter');
 

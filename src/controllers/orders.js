@@ -1,4 +1,7 @@
-const database = require('../connection');
+
+const database = require('../services/connection');
+const send = require('../services/nodemailer');
+const compiladorHtml = require('../utils/compiladorHtml');
 
 const registerOrder = async (req, res) => {
   const { cliente_id, observacao, pedido_produtos } = req.body;
@@ -73,13 +76,24 @@ const registerOrder = async (req, res) => {
       .update({ valor_total })
       .where({ id: carrinhoPedido[0].id });
 
-    // -----------------------------------------------------------------------------------
+      // -----------------------------------------------------------------------------------
+
+      const customerData = await database('clientes').where({id: cliente_id}).select('email', 'nome').first();
+      const subject = 'Cadastro de pedidos'
+      const html = await compiladorHtml('./src/templates/orders.html', {
+        customerName: customerData.nome
+      })
+  
+      send(customerData, subject, html)
+
+
     return res.json({
       pedido_id: carrinhoPedido[0].id,
       cliente_id,
       valor_total,
       pedido_produtos,
     });
+
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
