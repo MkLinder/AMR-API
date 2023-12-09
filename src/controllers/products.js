@@ -143,7 +143,7 @@ const deleteProduct = async (req, res) => {
       return res.status(400).json({ mensagem: 'O produto não foi deletado.' });
     }
 
-    return res.status(200).json({ mensagem: 'Produto deletado com sucesso.' });
+    return res.status(204).json();
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
