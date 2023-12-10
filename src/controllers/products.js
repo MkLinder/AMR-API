@@ -1,4 +1,4 @@
-const database = require('../connection');
+const database = require('../services/connection');
 const { nameFormatter } = require('../utils/dataFormatter');
 
 const registerProduct = async (req, res) => {

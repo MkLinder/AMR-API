@@ -1,4 +1,4 @@
-const database = require('../connection');
+const database = require('../services/connection');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { nameFormatter } = require('../utils/dataFormatter');
