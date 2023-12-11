@@ -131,6 +131,19 @@ const deleteProduct = async (req, res) => {
   try {
     const product = await database('produtos').where({ id: productId });
 
+    const orderedProduct = await database('pedido_produtos')
+      .where({
+        produto_id: productId,
+      })
+      .first();
+
+    if (orderedProduct) {
+      return res.status(400).json({
+        mensagem:
+          'O produto não pode ser excluído, pois está vinculado a um pedido.',
+      });
+    }
+
     if (product.length === 0) {
       return res.status(404).json({ mensagem: 'Produto não encontrado.' });
     }
@@ -140,7 +153,7 @@ const deleteProduct = async (req, res) => {
       .where({ id: productId });
 
     if (excludedProduct === 0) {
-      return res.status(400).json({ mensagem: 'O produto não foi deletado.' });
+      return res.status(400).json({ mensagem: 'O produto não foi excluido.' });
     }
 
     return res.status(204).json();
