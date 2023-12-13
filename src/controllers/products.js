@@ -1,4 +1,5 @@
 const database = require('../services/connection');
+const { uploadImage } = require('../services/uploads');
 const { nameFormatter } = require('../utils/dataFormatter');
 
 const registerProduct = async (req, res) => {
@@ -21,10 +22,10 @@ const registerProduct = async (req, res) => {
       return res.status(400).json({ mensagem: 'Produto já cadastrado.' });
     }
 
-    const productRegistration = await database('produtos')
+    let productRegistration = await database('produtos')
       .where({ id: categoria_id })
       .insert({
-        descricao,
+        descricao: nameFormatter(descricao),
         quantidade_estoque,
         valor,
         categoria_id,
@@ -35,6 +36,23 @@ const registerProduct = async (req, res) => {
       return res
         .status(500)
         .json({ mensagem: 'Erro do servidor. Produto não foi cadastrado.' });
+    }
+
+    if (req.file) {
+      const { originalname, mimetype, buffer } = req.file;
+
+      const id = productRegistration[0].id;
+
+      const image = await uploadImage(
+        `produtos/${id}/${originalname}`,
+        buffer,
+        mimetype
+      );
+
+      productRegistration = await database('produtos')
+        .update({ produto_imagem: image.url })
+        .where({ id })
+        .returning('*');
     }
 
     return res.status(201).json(productRegistration[0]);
@@ -68,6 +86,28 @@ const updateProductData = async (req, res) => {
 
     if (existingNameProduct && existingProduct.id !== Number(id)) {
       return res.status(400).json({ mensagem: 'Produto já cadastrado.' });
+    } 
+
+    if(req.file) {
+      const { originalname, mimetype, buffer } = req.file;
+
+      const id = existingProduct.id
+
+      const image = await uploadImage(
+        `produtos/${id}/${originalname}`,
+        buffer,
+        mimetype
+      );
+
+      await database('produtos')
+        .where({ id })
+        .update({
+          descricao: nameFormatter(descricao),
+          quantidade_estoque,
+          valor,
+          categoria_id,
+          produto_imagem: image.url
+        })
     }
 
     await database('produtos')

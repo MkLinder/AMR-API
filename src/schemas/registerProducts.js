@@ -38,6 +38,6 @@ const schemaProducts = joiValidations.object({
       'number.integer': 'O campo categoria_id precisa ser um número inteiro.',
       'number.positive': 'O campo categoria_id precisa ser um número positivo.',
     }),
-});
+}).unknown(true);
 
 module.exports = schemaProducts;

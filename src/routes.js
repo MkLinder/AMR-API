@@ -12,6 +12,7 @@ const schemaProducts = require('./schemas/registerProducts');
 const schemaCustomers = require('./schemas/registerCustomer');
 const orders = require('./controllers/orders');
 const schemaOrders = require('./schemas/registerOrders');
+const multer = require('./services/multer');
 
 route.get('/categoria', listCategories);
 route.post(
@@ -32,11 +33,13 @@ route.put(
 
 route.post(
   '/produto',
+  multer.single('produto_imagem'),
   validateBodyRequisition(schemaProducts),
   products.registerProduct
 );
 route.put(
   '/produto/:id',
+  multer.single('produto_imagem'),
   validateBodyRequisition(schemaProducts),
   products.updateProductData
 );
