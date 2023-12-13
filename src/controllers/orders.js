@@ -98,7 +98,6 @@ const registerOrder = async (req, res) => {
       pedido_produtos,
     });
   } catch (error) {
-    console.log(error.message);
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
 };
