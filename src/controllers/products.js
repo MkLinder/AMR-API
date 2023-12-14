@@ -1,5 +1,5 @@
 const database = require('../services/connection');
-const { uploadImage } = require('../services/uploads');
+const { uploadImage, deleteImage } = require('../services/storage');
 const { nameFormatter } = require('../utils/dataFormatter');
 
 const registerProduct = async (req, res) => {
@@ -86,12 +86,12 @@ const updateProductData = async (req, res) => {
 
     if (existingNameProduct && existingProduct.id !== Number(id)) {
       return res.status(400).json({ mensagem: 'Produto já cadastrado.' });
-    } 
+    }
 
-    if(req.file) {
+    if (req.file) {
       const { originalname, mimetype, buffer } = req.file;
 
-      const id = existingProduct.id
+      const id = existingProduct.id;
 
       const image = await uploadImage(
         `produtos/${id}/${originalname}`,
@@ -106,8 +106,8 @@ const updateProductData = async (req, res) => {
           quantidade_estoque,
           valor,
           categoria_id,
-          produto_imagem: image.url
-        })
+          produto_imagem: image.url,
+        });
     }
 
     await database('produtos')
@@ -196,6 +196,12 @@ const deleteProduct = async (req, res) => {
       return res.status(400).json({ mensagem: 'O produto não foi excluido.' });
     }
 
+    const url = product[0].produto_imagem;
+    const index = url.indexOf('produtos');
+    const path = url.substring(index);
+
+    await deleteImage(path);
+
     return res.status(204).json();
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
@@ -209,3 +215,5 @@ module.exports = {
   productInformation,
   deleteProduct,
 };
+
+// https://PDV-Bucket.s3.us-east-005.backblazeb2.com/produtos/80/agua_mineral.png
