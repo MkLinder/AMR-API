@@ -26,6 +26,16 @@ const uploadImage = async (path, buffer, mimetype) => {
   };
 };
 
+const deleteImage = async (path) => {
+  await s3
+    .deleteObject({
+      Bucket: process.env.BUCKET_NAME,
+      Key: path,
+    })
+    .promise();
+};
+
 module.exports = {
   uploadImage,
+  deleteImage,
 };
