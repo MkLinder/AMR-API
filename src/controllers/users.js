@@ -15,21 +15,21 @@ const registerUser = async (req, res) => {
 
     const cryptedPass = await bcrypt.hash(senha, 10);
 
-    const { rowCount } = await database('usuarios').insert({
-      nome: nameFormatter(nome),
-      email,
-      senha: cryptedPass,
-    });
+    const registeredUser = await database('usuarios')
+      .insert({
+        nome: nameFormatter(nome),
+        email,
+        senha: cryptedPass,
+      })
+      .returning(['nome', 'email']);
 
-    if (rowCount === 0) {
+    if (registeredUser.length === 0) {
       return res
         .status(500)
         .json({ mensagem: 'Erro do servidor. Usuário não foi cadastrado.' });
     }
 
-    return res
-      .status(201)
-      .json({ mensagem: 'Usuário cadastrado com sucesso.' });
+    return res.status(201).json(registeredUser[0]);
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
