@@ -215,5 +215,3 @@ module.exports = {
   productInformation,
   deleteProduct,
 };
-
-// https://PDV-Bucket.s3.us-east-005.backblazeb2.com/produtos/80/agua_mineral.png
