@@ -88,6 +88,7 @@ const updateProductData = async (req, res) => {
       return res.status(400).json({ mensagem: 'Produto já cadastrado.' });
     }
 
+    let bodyResponse;
     if (req.file) {
       const { originalname, mimetype, buffer } = req.file;
 
@@ -99,7 +100,7 @@ const updateProductData = async (req, res) => {
         mimetype
       );
 
-      await database('produtos')
+      bodyResponse = await database('produtos')
         .where({ id })
         .update({
           descricao: nameFormatter(descricao),
@@ -107,19 +108,29 @@ const updateProductData = async (req, res) => {
           valor,
           categoria_id,
           produto_imagem: image.url,
-        });
+        })
+        .returning('*');
+
+      return res.status(200).json(bodyResponse[0]);
     }
 
-    await database('produtos')
+    bodyResponse = await database('produtos')
       .where({ id })
       .update({
         descricao: nameFormatter(descricao),
         quantidade_estoque,
         valor,
         categoria_id,
-      });
+      })
+      .returning([
+        'id',
+        'descricao',
+        'quantidade_estoque',
+        'valor',
+        'categoria_id',
+      ]);
 
-    return res.status(204).json();
+    return res.status(200).json(bodyResponse[0]);
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
