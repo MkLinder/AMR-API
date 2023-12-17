@@ -1,4 +1,5 @@
-const database = require('../connection');
+const database = require('../services/connection');
+const { uploadImage, deleteImage } = require('../services/storage');
 const { nameFormatter } = require('../utils/dataFormatter');
 
 const registerProduct = async (req, res) => {
@@ -21,10 +22,10 @@ const registerProduct = async (req, res) => {
       return res.status(400).json({ mensagem: 'Produto já cadastrado.' });
     }
 
-    const productRegistration = await database('produtos')
+    let productRegistration = await database('produtos')
       .where({ id: categoria_id })
       .insert({
-        descricao,
+        descricao: nameFormatter(descricao),
         quantidade_estoque,
         valor,
         categoria_id,
@@ -35,6 +36,23 @@ const registerProduct = async (req, res) => {
       return res
         .status(500)
         .json({ mensagem: 'Erro do servidor. Produto não foi cadastrado.' });
+    }
+
+    if (req.file) {
+      const { originalname, mimetype, buffer } = req.file;
+
+      const id = productRegistration[0].id;
+
+      const image = await uploadImage(
+        `produtos/${id}/${originalname}`,
+        buffer,
+        mimetype
+      );
+
+      productRegistration = await database('produtos')
+        .update({ produto_imagem: image.url })
+        .where({ id })
+        .returning('*');
     }
 
     return res.status(201).json(productRegistration[0]);
@@ -70,16 +88,49 @@ const updateProductData = async (req, res) => {
       return res.status(400).json({ mensagem: 'Produto já cadastrado.' });
     }
 
-    await database('produtos')
+    let bodyResponse;
+    if (req.file) {
+      const { originalname, mimetype, buffer } = req.file;
+
+      const id = existingProduct.id;
+
+      const image = await uploadImage(
+        `produtos/${id}/${originalname}`,
+        buffer,
+        mimetype
+      );
+
+      bodyResponse = await database('produtos')
+        .where({ id })
+        .update({
+          descricao: nameFormatter(descricao),
+          quantidade_estoque,
+          valor,
+          categoria_id,
+          produto_imagem: image.url,
+        })
+        .returning('*');
+
+      return res.status(200).json(bodyResponse[0]);
+    }
+
+    bodyResponse = await database('produtos')
       .where({ id })
       .update({
         descricao: nameFormatter(descricao),
         quantidade_estoque,
         valor,
         categoria_id,
-      });
+      })
+      .returning([
+        'id',
+        'descricao',
+        'quantidade_estoque',
+        'valor',
+        'categoria_id',
+      ]);
 
-    return res.status(204).json();
+    return res.status(200).json(bodyResponse[0]);
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }
@@ -131,6 +182,19 @@ const deleteProduct = async (req, res) => {
   try {
     const product = await database('produtos').where({ id: productId });
 
+    const orderedProduct = await database('pedido_produtos')
+      .where({
+        produto_id: productId,
+      })
+      .first();
+
+    if (orderedProduct) {
+      return res.status(400).json({
+        mensagem:
+          'O produto não pode ser excluído, pois está vinculado a um pedido.',
+      });
+    }
+
     if (product.length === 0) {
       return res.status(404).json({ mensagem: 'Produto não encontrado.' });
     }
@@ -140,10 +204,16 @@ const deleteProduct = async (req, res) => {
       .where({ id: productId });
 
     if (excludedProduct === 0) {
-      return res.status(400).json({ mensagem: 'O produto não foi deletado.' });
+      return res.status(400).json({ mensagem: 'O produto não foi excluido.' });
     }
 
-    return res.status(200).json({ mensagem: 'Produto deletado com sucesso.' });
+    const url = product[0].produto_imagem;
+    const index = url.indexOf('produtos');
+    const path = url.substring(index);
+
+    await deleteImage(path);
+
+    return res.status(204).json();
   } catch (error) {
     return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
   }

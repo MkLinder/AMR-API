@@ -10,6 +10,9 @@ const schemaUsers = require('./schemas/registerUsers');
 const loginSchema = require('./schemas/login');
 const schemaProducts = require('./schemas/registerProducts');
 const schemaCustomers = require('./schemas/registerCustomer');
+const orders = require('./controllers/orders');
+const schemaOrders = require('./schemas/registerOrders');
+const multer = require('./services/multer');
 
 route.get('/categoria', listCategories);
 route.post(
@@ -30,11 +33,13 @@ route.put(
 
 route.post(
   '/produto',
+  multer.single('produto_imagem'),
   validateBodyRequisition(schemaProducts),
   products.registerProduct
 );
 route.put(
   '/produto/:id',
+  multer.single('produto_imagem'),
   validateBodyRequisition(schemaProducts),
   products.updateProductData
 );
@@ -54,5 +59,12 @@ route.put(
 );
 route.get('/cliente', customers.listCustomers);
 route.get('/cliente/:id', customers.getCustomerDetails);
+
+route.post(
+  '/pedido',
+  validateBodyRequisition(schemaOrders),
+  orders.registerOrder
+);
+route.get('/pedido', orders.listOrders);
 
 module.exports = route;

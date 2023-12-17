@@ -1,5 +1,4 @@
 const formatCpf = (cpf) => {
-  console.log('aqui', cpf);
   const formattedCpf = cpf.replace(
     /(\d{3})(\d{3})(\d{3})(\d{2})/,
     '$1.$2.$3-$4'
