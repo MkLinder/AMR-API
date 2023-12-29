@@ -2,7 +2,7 @@
 
 ⚠️ Esse é um projeto piloto, ou seja, no futuro outras funcionalidades serão implementadas. ⚠️
 
-Esta API, em fase inicial de desenvolvimento, representa um PDV onde podemos:<br>
+Esta API representa um E-commerce onde podemos:<br>
 
 #
 
