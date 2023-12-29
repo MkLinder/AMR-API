@@ -1,4 +1,4 @@
-# API PDV (frente de caixa)
+# AMR API E-commerce system.
 
 ⚠️ Esse é um projeto piloto, ou seja, no futuro outras funcionalidades serão implementadas. ⚠️
 
