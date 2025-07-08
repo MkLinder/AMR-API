@@ -1,6 +1,6 @@
 # AMR API E-commerce system.
 
-⚠️ Esse é um projeto piloto, ou seja, no futuro outras funcionalidades serão implementadas. ⚠️
+⚠️ Esse é um projeto piloto ⚠️
 
 Esta API representa um E-commerce onde podemos:<br>
 
